@@ -114,7 +114,7 @@
         "}" +
         ".hpop-panel.hpop-panel-active{" +
         "width:120px;" +
-        "height:60px;" +
+        "height:95px;" +
         "opacity: 0.9;" +
         "}" +
         ".hpop-panel.hpop-panel-left-active{" +
