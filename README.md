@@ -1,4 +1,4 @@
-# SoyaDokio自用油猴脚本
+# 自用油猴脚本
 
 
 [![GitHub license](https://img.shields.io/github/license/soyadokio/UserScript.svg?style=flat-square&color=4285dd&logo=github)](https://github.com/XIU2/UserScript/)
@@ -80,10 +80,7 @@ _注：不会离线安装 .crx 扩展？请参考 @XIU2 大佬的文章： [Chro
 | 名称 | 功能 | 链接 |
 | :---- | :---- | :----: |
 | ![](https://github.com/soyadokio/UserScript/blob/main/assets/images/hide_pictures_on_page_16x16.jpg)&nbsp;&nbsp;&nbsp;&nbsp;[一键隐藏图片](https://greasyfork.org/scripts/420682) | 一键隐藏网页所有图片，安全摸鱼... | [安装](https://greasyfork.org/scripts/420682/code/hide_pictures_on_page.user.js) \| [备用](https://cdn.jsdelivr.net/gh/soyadokio/UserScript/hide_pictures_on_page.user.js) |
-| ![](https://github.com/soyadokio/UserScript/blob/main/assets/images/xinshangmeng_helper_16x16.ico)&nbsp;&nbsp;&nbsp;&nbsp;[中烟新商盟小助手](https://greasyfork.org/scripts/439021) | 一键全订1.5倍可用量（限收收藏）、一键全删订购量为0商品 | [安装](https://greasyfork.org/scripts/439021/code/xinshangmeng_helper.user.js) \| [备用](https://cdn.jsdelivr.net/gh/soyadokio/UserScript/xinshangmeng_helper.user.js) |
-| ![](https://github.com/soyadokio/UserScript/blob/main/assets/images/base64_encode_decode_16x16.png)&nbsp;&nbsp;&nbsp;&nbsp;[Base64小助手](https://greasyfork.org/scripts/523292) | 选中文本后自动弹窗可编码/解码Base64 | [安装](https://greasyfork.org/scripts/523292/code/base64_helper.user.js) \| [备用](https://cdn.jsdelivr.net/gh/soyadokio/UserScript/base64_helper.user.js) |
 
-_注：使用 `备用安装` 的脚本可能存在24小时以内的更新延迟_
 
 
 ## 许可协议
