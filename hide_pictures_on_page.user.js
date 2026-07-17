@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name            一键隐藏图片优化版
 // @namespace       https://github.com/zhangzc
-// @version         0.6.1
+// @version         0.6.2
 // @author          zhangzc (基于原脚本修改)
 // @description     摸鱼时页面显示与工作不相关的图片未免有些明目张胆，这时候就需要一键隐藏全图了。优化：三个互斥模式选项，大图片前添加换行，修复闪烁问题（无延迟）。本脚本基于 https://greasyfork.org/scripts/420682 修改，保留原 MIT 许可。
 // @homepage        https://github.com/zhangzc/UserScript
@@ -19,6 +19,7 @@
 // @grant           GM_getValue
 // @grant           GM_setValue
 
+// @note            2026/07/16 0.6.2 处理小图缩放的问题
 // @note            2026/07/16 0.6.1 移除所有延迟操作，确保图片立即缩小，换行同步插入
 // @note            2022/01/24 0.3.3 新功能：记忆特定网站习惯（如在www.baidu.com隐藏了图片，关闭浏览器下次再进入仍是默认隐藏。如需再次显示需要自行设置为显示）
 // @note            2021/01/29 0.3.2 添加logo
@@ -49,7 +50,7 @@
 
     var hpop_config_custom;
     var hpop_config_default = {
-        "version": "0.6.1",
+        "version": "0.6.2",
         "sitesNormal": [],
         "sitesMiniMode": [],
         "sitesHide": [],
@@ -339,35 +340,58 @@
         }
     }
 
-    // 处理单个图片
-    function processImage(img) {
-        var $img = $(img);
-        if ($img.data("hpop-processed")) return;
-        $img.data("hpop-processed", true);
+    // 处理单个图片（仅大图缩小）
+	function processImage(img) {
+		var $img = $(img);
+		if ($img.data("hpop-processed")) return;
 
-        // 立即缩小（无论是否加载）
-        $img.addClass("hpop-mini-img hpop-mini-mode");
+		// 先获取图片尺寸
+		var width = img.naturalWidth || img.width || img.offsetWidth;
+		var height = img.naturalHeight || img.height || img.offsetHeight;
 
-        // 鼠标进入：补插换行 + 放大（同步，无延迟）
-        $img.on("mouseenter.hpop", function() {
-            // 先补插换行（如果尚未插入）
-            ensureLineBreakForImage(img);
-            // 然后放大（同步）
-            $img.removeClass("hpop-mini-mode").addClass("hpop-mini-hover");
-        }).on("mouseleave.hpop", function() {
-            $img.removeClass("hpop-mini-hover").addClass("hpop-mini-mode");
-        });
+		// 如果尺寸为 0（图片尚未加载完成），等加载完再重试
+		if (width === 0 || height === 0) {
+			if (!img.complete) {
+				img.addEventListener("load", function onLoad() {
+					processImage(img);
+					img.removeEventListener("load", onLoad);
+				});
+			}
+			return;
+		}
 
-        // 如果图片已加载，立即检查换行
-        if (img.complete) {
-            ensureLineBreakForImage(img);
-        } else {
-            img.addEventListener("load", function onLoad() {
-                ensureLineBreakForImage(img);
-                img.removeEventListener("load", onLoad);
-            });
-        }
-    }
+		var threshold = hpop_config_custom.largeImageThreshold || 200;
+
+		// 只有宽高都大于阈值时才做缩小处理
+		if (width <= threshold || height <= threshold) {
+			// 小图片：不做任何处理，直接返回
+			return;
+		}
+
+		// 标记已处理
+		$img.data("hpop-processed", true);
+
+		// 立即缩小（只对大图片）
+		$img.addClass("hpop-mini-img hpop-mini-mode");
+
+		// 鼠标进入：补插换行 + 放大
+		$img.on("mouseenter.hpop", function() {
+			ensureLineBreakForImage(img);
+			$img.removeClass("hpop-mini-mode").addClass("hpop-mini-hover");
+		}).on("mouseleave.hpop", function() {
+			$img.removeClass("hpop-mini-hover").addClass("hpop-mini-mode");
+		});
+
+		// 如果图片已加载，立即检查换行
+		if (img.complete) {
+			ensureLineBreakForImage(img);
+		} else {
+			img.addEventListener("load", function onLoad() {
+				ensureLineBreakForImage(img);
+				img.removeEventListener("load", onLoad);
+			});
+		}
+	}
 
     function applyMode(mode) {
         removeAllEffects();
