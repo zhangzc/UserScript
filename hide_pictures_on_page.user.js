@@ -1,16 +1,17 @@
 // ==UserScript==
-// @name            一键隐藏图片
-// @namespace       https://github.com/sdokio
-// @version         0.3.3
-// @author          SoyaDokio
-// @description     摸鱼时页面显示与工作不相关的图片未免有些明目张胆，这时候就需要一键隐藏全图了。
-// @homepage        https://github.com/sdokio/UserScript
-// @icon            data:image/jpg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gIoSUNDX1BST0ZJTEUAAQEAAAIYAAAAAAQwAABtbnRyUkdCIFhZWiAAAAAAAAAAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAAHRyWFlaAAABZAAAABRnWFlaAAABeAAAABRiWFlaAAABjAAAABRyVFJDAAABoAAAAChnVFJDAAABoAAAAChiVFJDAAABoAAAACh3dHB0AAAByAAAABRjcHJ0AAAB3AAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAFgAAAAcAHMAUgBHAEIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFhZWiAAAAAAAABvogAAOPUAAAOQWFlaIAAAAAAAAGKZAAC3hQAAGNpYWVogAAAAAAAAJKAAAA+EAAC2z3BhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABYWVogAAAAAAAA9tYAAQAAAADTLW1sdWMAAAAAAAAAAQAAAAxlblVTAAAAIAAAABwARwBvAG8AZwBsAGUAIABJAG4AYwAuACAAMgAwADEANv/bAEMACAYGBwYFCAcHBwkJCAoMFQ4MCwsMGRITDxUeGyAfHhsdHSElMCkhIy0kHR0qOSotMTM2NjYgKDs/OjQ+MDU2M//bAEMBCQkJDAsMGA4OGDMiHSIzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzM//AABEIABAAEAMBIgACEQEDEQH/xAAXAAADAQAAAAAAAAAAAAAAAAAABAUG/8QAIxAAAgICAgEEAwAAAAAAAAAAAQIDBAURITEGEhMiQRVhcf/EABUBAQEAAAAAAAAAAAAAAAAAAAME/8QAHBEBAAEEAwAAAAAAAAAAAAAAAQACESExcZHh/9oADAMBAAIRAxEAPwDe5rOXLmYEMk9nH4ZZjX9+sR63fj5NtTpNhgNHsHf6drZH8HlKdZcw2Uo2pBCTIys0LkEjTKPkDrRB62D98lzGLRyEqZDGz5DGzTGWKSLZauTyysoIJXeyCAeyP7Pw/jT2fIjNDVkq4avMs0QsKRI7qrKAo3sINg7I2eufotcy8RM2KQ79n//Z
-// @icon64          https://cdn.jsdelivr.net/gh/sdokio/UserScript/assets/images/hide_pictures_on_page_64x64.jpg
-// @supportURL      https://github.com/sdokio/UserScript/issues/new/choose
+// @name            一键隐藏图片优化版
+// @namespace       https://github.com/zhangzc
+// @version         0.6.2
+// @author          zhangzc (基于原脚本修改)
+// @description     摸鱼时页面显示与工作不相关的图片未免有些明目张胆，这时候就需要一键隐藏全图了。优化：三个互斥模式选项，大图片前添加换行，修复闪烁问题（无延迟）。本脚本基于 https://greasyfork.org/scripts/420682 修改，保留原 MIT 许可。
+// @homepage        https://github.com/zhangzc/UserScript
+// @icon            data:image/jpg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gIoSUNDX1BST0ZJTEUAAQEAAAIYAAAAAAQwAABtbnRyUkdCIFhZWiAAAAAAAAAAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAAHRyWFlaAAABZAAAABRnWFlaAAABeAAAABRiWFlaAAABjAAAABRyVFJDAAABoAAAAChnVFJDAAABoAAAAChiVFJDAAABoAAAACh3dHB0AAAByAAAABRjcHJ0AAAB3AAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAFgAAAAcAHMAUgBHAEIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFhZWiAAAAAAAABvogAAOPUAAAOQWFlaIAAAAAAAAGKZAAC3hQAAGNpYAAQAAAADTLW1sdWMAAAAAAAAAAQAAAAxlblVTAAAAIAAAABwARwBvAG8AZwBsAGUAIABJAG4AYwAuACAAMgAwADEANv/bAEMACAYGBwYFCAcHBwkJCAoMFQ4MCwsMGRITDxUeGyAfHhsdHSElMCkhIy0kHR0qOSotMTM2NjYgKDs/OjQ+MDU2M//bAEMBCQkJDAsMGA4OGDMiHSIzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzM//AABEIABAAEAMBIgACEQEDEQH/xAAXAAADAQAAAAAAAAAAAAAAAAAABAUG/8QAIxAAAgICAgEEAwAAAAAAAAAAAQIDBAURITEGEhNBUWFxgf/EABUBAQEAAAAAAAAAAAAAAAAAAAME/8QAHBEBAAEEAwAAAAAAAAAAAAAAAQACERExcZHh/9oADAMBAAIRAxEAPwDe5rOXLmYEMk9nH4ZZjX9+sR63fj5NtTpNhgNHsHf6drZH8HlKdZcw2Uo2pBCTIys0LkEjTKPkDrRB62D98lzGLRyEqZDGz5DGzTGWKSLZauTyysoIJXeyCAeyP7Pw/jT2fIjNDVkq4avMs0QsKRI7qrKAo3sINg7I2eufotcy8RM2KQ79n//Z
+// @icon64          https://cdn.jsdelivr.net/gh/zhangzc/UserScript/assets/images/hide_pictures_on_page_64x64.jpg
+// @supportURL      https://github.com/zhangzc/UserScript/issues/new/choose
 // @license         MIT
 
 // @match           *://*/*
+// @exclude         /^https?:\/\/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/
 // @require         https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.slim.min.js
 // @run-at          document-start
 
@@ -18,6 +19,7 @@
 // @grant           GM_getValue
 // @grant           GM_setValue
 
+// @note            2026/07/16 0.6.1 移除所有延迟操作，确保图片立即缩小，换行同步插入
 // @note            2022/01/24 0.3.3 新功能：记忆特定网站习惯（如在www.baidu.com隐藏了图片，关闭浏览器下次再进入仍是默认隐藏。如需再次显示需要自行设置为显示）
 // @note            2021/01/29 0.3.2 添加logo
 // @note            2021/01/29 0.3.1 新功能：拖拽控制面板；控制面板位置记忆
@@ -45,13 +47,18 @@
 
     var hpop_config_custom;
     var hpop_config_default = {
-        "version": "0.3.3",
+        "version": "0.6.1",
+        "sitesNormal": [],
+        "sitesMiniMode": [],
         "sitesHide": [],
+        "mode": "normal",
         "position": {
             "top": window.innerHeight / 2 - 14 + "",
             "left": "0",
             "right": "auto"
-        }
+        },
+        "largeImageThreshold": 200,
+        "addLineBreakForLargeImage": true
     }
 
     const STYLE_RAW = "" +
@@ -90,19 +97,20 @@
         "padding-left: 10px;" +
         "padding-right: 0;" +
         "}" +
-        ".hpop-panel input{" +
-        "margin: 0;" +
+        ".hpop-panel input[type='radio']{" +
+        "margin: 0 3px 0 0;" +
         "padding: 0;" +
         "vertical-align:middle;" +
-        "-webkit-appearance:checkbox;" +
-        "-moz-appearance:checkbox;" +
+        "-webkit-appearance:radio;" +
+        "-moz-appearance:radio;" +
         "position: static;" +
         "clip: auto;" +
         "opacity: 1;" +
         "cursor: pointer;" +
         "}" +
         ".hpop-panel.hpop-panel-active{" +
-        "width:70px;" +
+        "width:120px;" +
+        "height:60px;" +
         "opacity: 0.9;" +
         "}" +
         ".hpop-panel.hpop-panel-left-active{" +
@@ -117,40 +125,59 @@
         "margin:0;" +
         "padding:0 0 0 3px;" +
         "font-weight:500;" +
+        "cursor:pointer;" +
         "}" +
         ".hpop-panel-move{" +
         "border-width:1px 1px 1px 0;" +
         "border-radius: 14px;" +
+        "}" +
+        ".hpop-option{" +
+        "display:block;" +
+        "height:20px;" +
+        "line-height:20px;" +
+        "}" +
+        ".hpop-mini-img{" +
+        "position:relative !important;" +
+        "z-index:2147483646 !important;" +
+        "transition:all 0.3s ease-in-out !important;" +
+        "}" +
+        ".hpop-mini-mode{" +
+        "max-width:20px !important;" +
+        "max-height:20px !important;" +
+        "opacity:0.3 !important;" +
+        "filter:blur(1px) !important;" +
+        "overflow:hidden !important;" +
+        "}" +
+        ".hpop-mini-hover{" +
+        "max-width:none !important;" +
+        "max-height:none !important;" +
+        "opacity:1 !important;" +
+        "filter:none !important;" +
+        "z-index:2147483647 !important;" +
         "}" +
         " ";
 
     main();
 
     function main() {
-        // 取出本地缓存配置
         hpop_config_custom = GM_getValue("hpop_config");
         if (!hpop_config_custom) {
             hpop_config_custom = hpop_config_default;
         }
-        // 将数据结构的变更保存到本地缓存配置
         var updFlag = false;
         for (var _key in hpop_config_default) {
             if (!hpop_config_custom.hasOwnProperty(_key)) {
-                hpop_config_custom._key = hpop_config_default._key;
+                hpop_config_custom[_key] = hpop_config_default[_key];
                 updFlag = true;
             }
         }
         if (updFlag) {
-            // 保存当前配置到本地缓存
             GM_setValue("hpop_config", hpop_config_custom);
         }
-
         generateControlPanel();
     }
 
-    // 生成控制面板（浮动元素）
     function generateControlPanel() {
-        // 新建控制面板元素
         var node = document.createElement("hide-pictures-on-page");
         node.id = "hpop-panel";
         if (hpop_config_custom.position.left == 0) {
@@ -162,9 +189,21 @@
         node.style.cssText = "position:fixed;top:" + hpop_config_custom.position.top + "px;"
             + "left:" + hpop_config_custom.position.left + "px;"
             + "right:" + hpop_config_custom.position.right + "px;";
-        node.innerHTML = "<input type='checkbox' id='hpop-switch' />"
-            + "<label style='cursor:pointer;font-size:12px;color:3d3d3d;'>隐藏图片</label>";
-        // 仅在顶层窗口添加控制面板
+
+        node.innerHTML =
+            "<div class='hpop-option'>" +
+            "  <input type='radio' name='hpop-mode' id='hpop-normal' value='normal' />" +
+            "  <label for='hpop-normal'>不启用</label>" +
+            "</div>" +
+            "<div class='hpop-option'>" +
+            "  <input type='radio' name='hpop-mode' id='hpop-mini' value='mini' />" +
+            "  <label for='hpop-mini'>迷你图片</label>" +
+            "</div>" +
+            "<div class='hpop-option'>" +
+            "  <input type='radio' name='hpop-mode' id='hpop-hide' value='hide' />" +
+            "  <label for='hpop-hide'>全隐图片</label>" +
+            "</div>";
+
         if (window.self === window.top) {
             if (document.querySelector("body")) {
                 document.body.appendChild(node);
@@ -172,14 +211,7 @@
                 document.documentElement.appendChild(node);
             }
         }
-        // 根据记忆状态（显示/隐藏）初始化该网站
-        if (hpop_config_custom.sitesHide.indexOf(document.location.hostname) > -1) {
-            document.querySelector("#hpop-switch").checked = true;
-            $(document).ready(function() {
-                $("img").hide();
-            });
-        }
-        // 添加控制面板所需样式
+
         var _style = document.createElement("style");
         _style.type = "text/css";
         _style.innerHTML = STYLE_RAW;
@@ -188,7 +220,28 @@
         } else {
             GM_addStyle(STYLE_RAW);
         }
-        // 给控制面板添加鼠标滑入/滑出时展开/吸附效果
+
+        var currentHostname = document.location.hostname;
+        var currentMode = "normal";
+        if (hpop_config_custom.sitesNormal.indexOf(currentHostname) > -1) {
+            currentMode = "normal";
+        } else if (hpop_config_custom.sitesMiniMode.indexOf(currentHostname) > -1) {
+            currentMode = "mini";
+        } else if (hpop_config_custom.sitesHide.indexOf(currentHostname) > -1) {
+            currentMode = "hide";
+        } else {
+            currentMode = hpop_config_custom.mode;
+        }
+
+        var modeRadio = document.querySelector("#hpop-" + currentMode);
+        if (modeRadio) {
+            modeRadio.checked = true;
+        }
+
+        $(document).ready(function() {
+            applyMode(currentMode);
+        });
+
         node.addEventListener("mouseover", function () {
             node.classList.add("hpop-panel-active");
             if (hpop_config_custom.position.left == 0) {
@@ -205,7 +258,7 @@
                 node.classList.remove("hpop-panel-right-active");
             }, 300);
         });
-        // 给控制面板添加拖拽效果
+
         node.addEventListener("mousedown", function (event) {
             node.style.transition = "null";
             var dispX = event.clientX - node.offsetLeft;
@@ -220,7 +273,6 @@
             document.addEventListener("mousemove", move);
             document.addEventListener("mouseup", function () {
                 node.classList.remove("hpop-panel-move");
-
                 node.style.transition = "0.3s";
                 document.removeEventListener("mousemove", move);
                 var bodyWidth = document.body.clientWidth;
@@ -239,27 +291,132 @@
                     node.classList.remove("hpop-panel-right");
                 }
                 hpop_config_custom.position.top = node.offsetTop;
-                // 保存当前配置到本地缓存
                 GM_setValue("hpop_config", hpop_config_custom);
             });
         });
-        // 给控制面板添加点击显示/隐藏效果
-        var toggleShowHide = function () {
-            if (document.querySelector("#hpop-switch").checked) {
-                document.querySelector("#hpop-switch").checked = false;
-                $("img").show("500");
-                // 取消记忆本网站下次默认隐藏图片
-                hpop_config_custom.sitesHide.remove(document.location.hostname);
-            } else {
-                document.querySelector("#hpop-switch").checked = true;
-                $("img").hide("500");
-                // 记忆本网站下次默认隐藏图片
-                hpop_config_custom.sitesHide.push(document.location.hostname);
-            }
-            // 保存当前配置到本地缓存
-            GM_setValue("hpop_config", hpop_config_custom);
-        }
-        node.addEventListener("click", toggleShowHide);
-        node.querySelector("#hpop-switch").addEventListener("click", toggleShowHide);
+
+        var radioButtons = document.querySelectorAll("input[name='hpop-mode']");
+        radioButtons.forEach(function(radio) {
+            radio.addEventListener("click", function() {
+                var selectedMode = this.value;
+                applyMode(selectedMode);
+                var currentHostname = document.location.hostname;
+                hpop_config_custom.sitesNormal.remove(currentHostname);
+                hpop_config_custom.sitesMiniMode.remove(currentHostname);
+                hpop_config_custom.sitesHide.remove(currentHostname);
+                if (selectedMode === "normal") {
+                    hpop_config_custom.sitesNormal.push(currentHostname);
+                } else if (selectedMode === "mini") {
+                    hpop_config_custom.sitesMiniMode.push(currentHostname);
+                } else if (selectedMode === "hide") {
+                    hpop_config_custom.sitesHide.push(currentHostname);
+                }
+                GM_setValue("hpop_config", hpop_config_custom);
+            });
+        });
     }
+
+    // 补插换行（同步）
+    function ensureLineBreakForImage(img) {
+        if (!hpop_config_custom.addLineBreakForLargeImage) return;
+        if (img.hasAttribute("data-hpop-linebreak-added")) return;
+
+        var width = img.naturalWidth || img.width || img.offsetWidth;
+        var height = img.naturalHeight || img.height || img.offsetHeight;
+        if (width === 0 || height === 0) return;
+
+        var threshold = hpop_config_custom.largeImageThreshold || 200;
+        if (width > threshold && height > threshold) {
+            var br = document.createElement("br");
+            br.style.cssText = "display: block; clear: both; margin: 10px 0;";
+            br.className = "hpop-linebreak";
+            if (img.parentNode) {
+                img.parentNode.insertBefore(br, img);
+                img.setAttribute("data-hpop-linebreak-added", "true");
+            }
+        }
+    }
+
+    // 处理单个图片
+    function processImage(img) {
+        var $img = $(img);
+        if ($img.data("hpop-processed")) return;
+        $img.data("hpop-processed", true);
+
+        // 立即缩小（无论是否加载）
+        $img.addClass("hpop-mini-img hpop-mini-mode");
+
+        // 鼠标进入：补插换行 + 放大（同步，无延迟）
+        $img.on("mouseenter.hpop", function() {
+            // 先补插换行（如果尚未插入）
+            ensureLineBreakForImage(img);
+            // 然后放大（同步）
+            $img.removeClass("hpop-mini-mode").addClass("hpop-mini-hover");
+        }).on("mouseleave.hpop", function() {
+            $img.removeClass("hpop-mini-hover").addClass("hpop-mini-mode");
+        });
+
+        // 如果图片已加载，立即检查换行
+        if (img.complete) {
+            ensureLineBreakForImage(img);
+        } else {
+            img.addEventListener("load", function onLoad() {
+                ensureLineBreakForImage(img);
+                img.removeEventListener("load", onLoad);
+            });
+        }
+    }
+
+    function applyMode(mode) {
+        removeAllEffects();
+        switch(mode) {
+            case "normal":
+                $("img").show("500");
+                break;
+            case "mini":
+                $("img").each(function() { processImage(this); });
+                observeImages();
+                break;
+            case "hide":
+                $("img").hide("500");
+                break;
+        }
+    }
+
+    function removeAllEffects() {
+        $("img").show("500");
+        $("img").removeClass("hpop-mini-img hpop-mini-mode hpop-mini-hover");
+        $("img").off(".hpop");
+        $("img").removeData("hpop-processed");
+        $("img").removeAttr("data-hpop-linebreak-added");
+        $(".hpop-linebreak").remove();
+        if (window._hpopObserver) {
+            window._hpopObserver.disconnect();
+            delete window._hpopObserver;
+        }
+    }
+
+    function observeImages() {
+        if (window._hpopObserver) {
+            window._hpopObserver.disconnect();
+        }
+        var observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                if (mutation.addedNodes) {
+                    $(mutation.addedNodes).find("img").each(function() {
+                        var currentMode = document.querySelector("input[name='hpop-mode']:checked")?.value;
+                        if (currentMode === "mini") {
+                            processImage(this);
+                        }
+                    });
+                }
+            });
+        });
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
+        window._hpopObserver = observer;
+    }
+
 })();
