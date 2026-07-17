@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name            一键隐藏图片优化版
 // @namespace       https://github.com/zhangzc
-// @version         0.6.2
+// @version         0.6.1
 // @author          zhangzc (基于原脚本修改)
 // @description     摸鱼时页面显示与工作不相关的图片未免有些明目张胆，这时候就需要一键隐藏全图了。优化：三个互斥模式选项，大图片前添加换行，修复闪烁问题（无延迟）。本脚本基于 https://greasyfork.org/scripts/420682 修改，保留原 MIT 许可。
 // @homepage        https://github.com/zhangzc/UserScript
