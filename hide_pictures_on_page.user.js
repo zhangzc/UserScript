@@ -19,7 +19,7 @@
 // @grant           GM_getValue
 // @grant           GM_setValue
 
-// @note            2026/07/16 0.6.2 处理小图缩放的问题
+// @note            2026/07/16 0.6.2 处理小图缩放
 // @note            2026/07/16 0.6.1 移除所有延迟操作，确保图片立即缩小，换行同步插入
 // @note            2022/01/24 0.3.3 新功能：记忆特定网站习惯（如在www.baidu.com隐藏了图片，关闭浏览器下次再进入仍是默认隐藏。如需再次显示需要自行设置为显示）
 // @note            2021/01/29 0.3.2 添加logo
@@ -51,17 +51,18 @@
     var hpop_config_custom;
     var hpop_config_default = {
         "version": "0.6.2",
-        "sitesNormal": [],
-        "sitesMiniMode": [],
-        "sitesHide": [],
-        "mode": "normal",
-        "position": {
-            "top": window.innerHeight / 2 - 14 + "",
-            "left": "0",
-            "right": "auto"
-        },
-        "largeImageThreshold": 200,
-        "addLineBreakForLargeImage": true
+		"sitesNormal": [],
+		"sitesMiniMode": [],
+		"sitesHide": [],
+		"mode": "normal",
+		"position": {
+			"top": window.innerHeight / 2 - 14 + "",
+			"left": "0",
+			"right": "auto"
+		},
+		"largeImageThreshold": 200,
+		"addLineBreakForLargeImage": true,
+		"enableSmallImageScale": false  // 默认关闭（仅大图缩放）
     }
 
     const STYLE_RAW = "" +
@@ -193,19 +194,24 @@
             + "left:" + hpop_config_custom.position.left + "px;"
             + "right:" + hpop_config_custom.position.right + "px;";
 
-        node.innerHTML =
-            "<div class='hpop-option'>" +
-            "  <input type='radio' name='hpop-mode' id='hpop-normal' value='normal' />" +
-            "  <label for='hpop-normal'>不启用</label>" +
-            "</div>" +
-            "<div class='hpop-option'>" +
-            "  <input type='radio' name='hpop-mode' id='hpop-mini' value='mini' />" +
-            "  <label for='hpop-mini'>迷你图片</label>" +
-            "</div>" +
-            "<div class='hpop-option'>" +
-            "  <input type='radio' name='hpop-mode' id='hpop-hide' value='hide' />" +
-            "  <label for='hpop-hide'>全隐图片</label>" +
-            "</div>";
+		node.innerHTML =
+			"<div class='hpop-option'>" +
+			"  <input type='radio' name='hpop-mode' id='hpop-normal' value='normal' />" +
+			"  <label for='hpop-normal'>不启用</label>" +
+			"</div>" +
+			"<div class='hpop-option'>" +
+			"  <input type='radio' name='hpop-mode' id='hpop-mini' value='mini' />" +
+			"  <label for='hpop-mini'>迷你图片</label>" +
+			"</div>" +
+			"<div class='hpop-option'>" +
+			"  <input type='radio' name='hpop-mode' id='hpop-hide' value='hide' />" +
+			"  <label for='hpop-hide'>全隐图片</label>" +
+			"</div>" +
+			// 新增：小图缩放复选框
+			"<div class='hpop-option' style='margin-top:4px;border-top:1px solid #ddd;padding-top:4px;'>" +
+			"  <input type='checkbox' id='hpop-enable-small-scale' />" +
+			"  <label for='hpop-enable-small-scale' style='font-weight:400;'>小图缩放</label>" +
+			"</div>";
 
         if (window.self === window.top) {
             if (document.querySelector("body")) {
@@ -239,6 +245,20 @@
         var modeRadio = document.querySelector("#hpop-" + currentMode);
         if (modeRadio) {
             modeRadio.checked = true;
+			// 恢复小图缩放复选框状态
+			var smallScaleCheckbox = document.querySelector("#hpop-enable-small-scale");
+			if (smallScaleCheckbox) {
+				smallScaleCheckbox.checked = hpop_config_custom.enableSmallImageScale || false;
+				smallScaleCheckbox.addEventListener("change", function() {
+					hpop_config_custom.enableSmallImageScale = this.checked;
+					GM_setValue("hpop_config", hpop_config_custom);
+					// 如果当前是 mini 模式，重新应用
+					var currentMode = document.querySelector("input[name='hpop-mode']:checked")?.value;
+					if (currentMode === "mini") {
+						applyMode("mini");
+					}
+				});
+			}
         }
 
         $(document).ready(function() {
@@ -340,16 +360,16 @@
         }
     }
 
-    // 处理单个图片（仅大图缩小）
+    // 处理单个图片
 	function processImage(img) {
 		var $img = $(img);
 		if ($img.data("hpop-processed")) return;
 
-		// 先获取图片尺寸
+		// 获取图片尺寸
 		var width = img.naturalWidth || img.width || img.offsetWidth;
 		var height = img.naturalHeight || img.height || img.offsetHeight;
 
-		// 如果尺寸为 0（图片尚未加载完成），等加载完再重试
+		// 如果尺寸为 0（图片尚未加载），等加载完再重试
 		if (width === 0 || height === 0) {
 			if (!img.complete) {
 				img.addEventListener("load", function onLoad() {
@@ -361,17 +381,17 @@
 		}
 
 		var threshold = hpop_config_custom.largeImageThreshold || 200;
+		var enableSmall = hpop_config_custom.enableSmallImageScale || false;
 
-		// 只有宽高都大于阈值时才做缩小处理
-		if (width <= threshold || height <= threshold) {
-			// 小图片：不做任何处理，直接返回
-			return;
+		// 🔥 核心判断：如果“小图缩放”未开启，且图片小于阈值，则不处理
+		if (!enableSmall && (width <= threshold || height <= threshold)) {
+			return; // 小图片，不缩放
 		}
 
 		// 标记已处理
 		$img.data("hpop-processed", true);
 
-		// 立即缩小（只对大图片）
+		// 立即缩小
 		$img.addClass("hpop-mini-img hpop-mini-mode");
 
 		// 鼠标进入：补插换行 + 放大
