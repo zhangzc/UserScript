@@ -25,6 +25,8 @@
 // @note            2021/01/29 0.3.1 新功能：拖拽控制面板；控制面板位置记忆
 // @note            2021/01/27 0.2.1 修复复选框点击无效问题；添加动图使用说明
 // @note            2021/01/26 0.1   初版发布
+// @downloadURL https://update.greasyfork.org/scripts/587327/%E4%B8%80%E9%94%AE%E9%9A%90%E8%97%8F%E5%9B%BE%E7%89%87%E4%BC%98%E5%8C%96%E7%89%88.user.js
+// @updateURL https://update.greasyfork.org/scripts/587327/%E4%B8%80%E9%94%AE%E9%9A%90%E8%97%8F%E5%9B%BE%E7%89%87%E4%BC%98%E5%8C%96%E7%89%88.meta.js
 // ==/UserScript==
 
 (function () {
